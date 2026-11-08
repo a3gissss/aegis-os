@@ -1,4 +1,4 @@
-import { makeId, dueLabel, cleanDate } from "./utils.js";
+import { makeId, dueLabel, cleanDate, notifyChange } from "./utils.js";
 
 // Goals are big outcomes broken into small steps.
 // Progress = how many steps are done.
@@ -25,6 +25,11 @@ function loadGoals() {
 
 function saveGoals() {
   localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+  notifyChange();
+}
+
+export function getGoals() {
+  return goals;
 }
 
 function findGoal(id) {
@@ -177,7 +182,7 @@ function addStep(goalId, text) {
   focusStepInput(goalId);
 }
 
-function toggleStep(goalId, stepId) {
+export function toggleStep(goalId, stepId) {
   const step = findGoal(goalId).steps.find((s) => s.id === stepId);
   step.done = !step.done;
   saveGoals();

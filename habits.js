@@ -1,4 +1,4 @@
-import { makeId, dateKey } from "./utils.js";
+import { makeId, dateKey, notifyChange } from "./utils.js";
 
 // Habits are saved under their own key, separate from tasks
 const HABITS_KEY = "aegis.habits";
@@ -23,6 +23,11 @@ function loadHabits() {
 
 function saveHabits() {
   localStorage.setItem(HABITS_KEY, JSON.stringify(habits));
+  notifyChange();
+}
+
+export function getHabits() {
+  return habits;
 }
 
 // The last n days, oldest first, ending with today
@@ -38,7 +43,7 @@ function lastDays(n) {
 
 // Count consecutive done days going backwards. If today isn't done yet,
 // start from yesterday, so the streak doesn't "break" until the day is over.
-function currentStreak(habit) {
+export function currentStreak(habit) {
   const done = new Set(habit.log);
   const day = new Date();
   if (!done.has(dateKey(day))) day.setDate(day.getDate() - 1);
@@ -121,7 +126,7 @@ function addHabit(name) {
   renderHabits();
 }
 
-function toggleDay(id, key) {
+export function toggleDay(id, key) {
   const habit = habits.find((h) => h.id === id);
   habit.log = habit.log.includes(key)
     ? habit.log.filter((k) => k !== key)

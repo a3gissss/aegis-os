@@ -1,4 +1,4 @@
-import { makeId, dateKey } from "./utils.js";
+import { makeId, dateKey, notifyChange } from "./utils.js";
 
 // A focus/break study timer. Every finished focus block is logged
 // as a session, so you can see how much you studied today.
@@ -68,6 +68,11 @@ function loadSessions() {
 
 function saveSessions() {
   localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+  notifyChange();
+}
+
+export function getSessions() {
+  return sessions;
 }
 
 function timeLeft() {

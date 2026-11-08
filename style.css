@@ -72,12 +72,14 @@ h1 {
 
 .tab {
   flex: 1;
-  padding: 8px;
+  min-width: 0;
+  min-height: 44px; /* comfortable thumb target */
+  padding: 8px 2px;
   background: none;
   border: none;
   border-radius: 7px;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -225,6 +227,113 @@ h1 {
 
 .count.error {
   color: var(--danger);
+}
+
+/* Today screen */
+.today-summary {
+  padding: 16px;
+  margin-bottom: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.today-headline {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.today-summary .progress-fill {
+  background: var(--success);
+}
+
+.today-list {
+  list-style: none;
+  margin: 8px 0 24px;
+  padding: 0;
+}
+
+.today-item label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.today-item input[type="checkbox"] {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.today-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  word-break: break-word;
+}
+
+.today-meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.today-item.done .today-main {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.today-empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 14px;
+  margin-bottom: 6px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.link-btn {
+  min-height: 40px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.today-study {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.today-study .btn-primary {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  font-size: 0.95rem;
 }
 
 /* Backup bar at the bottom of the page */

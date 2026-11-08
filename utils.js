@@ -44,3 +44,14 @@ export function dueLabel(due) {
 export function cleanDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
 }
+
+// A tiny "something changed" signal. Each part of the app calls
+// notifyChange() after saving, and the Today screen listens with onChange()
+// so it redraws when you tick something on another tab (and vice versa).
+export function notifyChange() {
+  document.dispatchEvent(new Event("aegis:change"));
+}
+
+export function onChange(callback) {
+  document.addEventListener("aegis:change", callback);
+}

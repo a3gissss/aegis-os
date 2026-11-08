@@ -24,6 +24,7 @@
     </header>
 
     <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-view="today">Today</button>
       <button class="tab" role="tab" data-view="tasks">Tasks</button>
       <button class="tab" role="tab" data-view="habits">Habits</button>
       <button class="tab" role="tab" data-view="goals">Goals</button>
@@ -31,7 +32,31 @@
       <button class="tab" role="tab" data-view="notes">Notes</button>
     </nav>
 
-    <section id="tasks-view">
+    <section id="today-view" hidden>
+      <div class="today-summary">
+        <p id="today-headline" class="today-headline"></p>
+        <div id="today-bar" class="progress">
+          <div id="today-fill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Tasks due</h2>
+      <ul id="today-tasks" class="today-list"></ul>
+
+      <h2 class="section-title">Habits</h2>
+      <ul id="today-habits" class="today-list"></ul>
+
+      <h2 class="section-title">Next goal steps</h2>
+      <ul id="today-goals" class="today-list"></ul>
+
+      <h2 class="section-title">Study</h2>
+      <div class="today-study">
+        <span id="today-study-text"></span>
+        <button id="today-study-btn" class="btn-primary">Start focus</button>
+      </div>
+    </section>
+
+    <section id="tasks-view" hidden>
       <form id="task-form" class="add-form">
         <input id="task-input" type="text" placeholder="What do you need to do?"
                maxlength="200" autocomplete="off" required>
@@ -139,6 +164,7 @@
   <script type="module" src="notes.js"></script>
   <script type="module" src="backup.js"></script>
   <script type="module" src="pwa.js"></script>
+  <script type="module" src="today.js"></script>
   <script type="module" src="tabs.js"></script>
 </body>
 </html>

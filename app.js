@@ -1,4 +1,4 @@
-import { makeId, daysUntil, dueLabel, cleanDate } from "./utils.js";
+import { makeId, daysUntil, dueLabel, cleanDate, notifyChange } from "./utils.js";
 
 // The key our tasks are saved under in the browser's localStorage
 const STORAGE_KEY = "aegis.tasks";
@@ -27,6 +27,13 @@ function loadTasks() {
 
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  notifyChange();
+}
+
+// Lets other screens (like Today) read the tasks without being able to
+// replace the array itself
+export function getTasks() {
+  return tasks;
 }
 
 // Order: unfinished first, then by due date (soonest first),
@@ -97,7 +104,7 @@ function addTask(text, due) {
   render();
 }
 
-function toggleTask(id) {
+export function toggleTask(id) {
   const task = tasks.find((t) => t.id === id);
   task.done = !task.done;
   saveTasks();

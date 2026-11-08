@@ -6,7 +6,7 @@
 //         and keep a copy in the cache.
 // Offline: the fetch fails, so serve the cached copy instead.
 
-const CACHE = "aegis-v1";
+const CACHE = "aegis-v3"; // bump this whenever APP_FILES or this file's logic changes
 
 // The "app shell": every file needed to start the app
 const APP_FILES = [
@@ -21,6 +21,7 @@ const APP_FILES = [
   "./notes.js",
   "./backup.js",
   "./tabs.js",
+  "./today.js",
   "./pwa.js",
   "./manifest.json",
   "./icons/icon-192.png",
@@ -29,7 +30,10 @@ const APP_FILES = [
 
 // Runs once, when the browser installs this service worker
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_FILES)));
+  // cache: "reload" skips the browser's normal HTTP cache, so we store the
+  // real latest files, not possibly-stale copies of them
+  const fresh = APP_FILES.map((file) => new Request(file, { cache: "reload" }));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(fresh)));
   self.skipWaiting(); // activate straight away instead of waiting for old tabs to close
 });
 
@@ -49,8 +53,14 @@ self.addEventListener("fetch", (event) => {
   // Never cache requests to other sites or anything that changes data.
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
 
+  // cache: "no-cache" makes fetch() check with the server every time instead of
+  // quietly reusing the browser's HTTP cache. Without it, "network first" could
+  // still hand back an old file, mixing new and old code (a real bug we hit).
+  // Page navigations can't be re-created with options, so those go by URL.
+  const fresh = request.mode === "navigate" ? request.url : request;
+
   event.respondWith(
-    fetch(request)
+    fetch(fresh, { cache: "no-cache" })
       .then((response) => {
         // Only cache good responses, never errors
         if (response.ok) {
