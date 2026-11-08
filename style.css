@@ -1,0 +1,675 @@
+/* Colors live in variables so the whole theme can change from one place */
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --border: #262a33;
+  --text: #e6e8ec;
+  --muted: #8b919c;
+  --accent: #4f8cff;
+  --accent-strong: #2f6fe0; /* darker blue so white text on buttons stays readable */
+  --success: #3ccf7a;
+  --danger: #ff5c5c;
+  --warning: #ffb547;
+
+  /* Tells the browser to draw built-in controls (like the date picker) dark */
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.app {
+  width: 100%;
+  max-width: 520px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+#install-btn {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 4px 0 24px;
+  color: var(--muted);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: var(--border);
+  color: var(--text);
+}
+
+/* Input row (shared by tasks and habits) */
+.add-form {
+  display: flex;
+  flex-wrap: wrap; /* lets the date picker drop to a new line on phones */
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.add-form input {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.add-form input[type="text"] {
+  min-width: 200px;
+}
+
+.add-form input[type="date"] {
+  flex: 0 0 auto;
+}
+
+.add-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.add-form button {
+  padding: 0 18px;
+  background: var(--accent-strong);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Task and habit lists */
+#task-list,
+#habit-list,
+#goal-list,
+#session-list,
+#note-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.task input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.task-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  word-break: break-word;
+}
+
+.task.done .task-text {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+/* Deadline labels */
+.due {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.due.soon {
+  color: var(--warning);
+}
+
+.due.today {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.due.overdue {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* A finished task's deadline no longer matters, so tone it down */
+.task.done .due {
+  color: var(--muted);
+  font-weight: normal;
+}
+
+.delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.delete:hover {
+  color: var(--danger);
+}
+
+.count {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Status message tones */
+.count.ok {
+  color: var(--success);
+}
+
+.count.warn {
+  color: var(--warning);
+}
+
+.count.error {
+  color: var(--danger);
+}
+
+/* Backup bar at the bottom of the page */
+.backup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.backup-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.backup .btn-secondary {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+/* Habits */
+.habit {
+  padding: 14px;
+  margin-bottom: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.habit-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.habit-name {
+  flex: 1;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.streak {
+  color: var(--muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.streak.active {
+  color: var(--text);
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.day strong {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.day.today {
+  border-color: var(--accent);
+}
+
+.day.done {
+  background: var(--success);
+  border-color: var(--success);
+  color: #0b2617;
+}
+
+.day.done strong {
+  color: #0b2617;
+}
+
+/* Goals */
+.goal {
+  padding: 14px;
+  margin-bottom: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.goal.complete {
+  border-color: var(--success);
+}
+
+.goal-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.goal-heading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  word-break: break-word;
+}
+
+.goal-title {
+  font-weight: 600;
+}
+
+.progress {
+  height: 8px;
+  background: var(--bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease; /* the bar slides instead of jumping */
+}
+
+.goal.complete .progress-fill {
+  background: var(--success);
+}
+
+.progress-text {
+  margin: 6px 0 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.steps {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+}
+
+.step input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.step span {
+  flex: 1;
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+.step.done span {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.step-form {
+  display: flex;
+  gap: 6px;
+}
+
+.step-form input {
+  flex: 1;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.step-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Study timer */
+.timer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.modes {
+  display: flex;
+  gap: 6px;
+}
+
+.mode {
+  flex: 1;
+  padding: 8px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.mode.active {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.timer-display {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 4.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums; /* every digit the same width, so it doesn't wobble */
+}
+
+#study-subject {
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+#study-subject:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+#study-subject:disabled {
+  color: var(--muted);
+}
+
+.timer-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--accent-strong);
+  border: none;
+  color: white;
+}
+
+.btn-secondary {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.section-title {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.session {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.session span {
+  word-break: break-word;
+}
+
+.session small {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Notes */
+.notes-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+#note-search {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+#note-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.notes-toolbar .btn-primary {
+  flex: 0 0 auto;
+  padding: 0 16px;
+}
+
+.note-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.note-card:hover {
+  border-color: var(--accent);
+}
+
+.note-card span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+.note-card small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.editor-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.editor-bar .btn-secondary {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+#note-status {
+  flex: 1;
+}
+
+.btn-danger {
+  padding: 8px 12px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--danger);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  border-color: var(--danger);
+}
+
+#note-title,
+#note-body {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+}
+
+#note-title {
+  padding: 12px 14px;
+  border-radius: 8px 8px 0 0;
+  border-bottom: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+#note-body {
+  min-height: 50vh;
+  padding: 12px 14px;
+  border-radius: 0 0 8px 8px;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+#note-title:focus,
+#note-body:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.step-form button {
+  width: 36px;
+  background: var(--border);
+  border: none;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+}

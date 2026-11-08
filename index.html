@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aegis OS</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Makes Aegis OS installable as an app (PWA) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f1115">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <div>
+        <h1>Aegis OS</h1>
+        <p id="today" class="subtitle"></p>
+      </div>
+      <!-- Only shown when the browser says the app can be installed -->
+      <button id="install-btn" class="btn-secondary" hidden>Install app</button>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-view="tasks">Tasks</button>
+      <button class="tab" role="tab" data-view="habits">Habits</button>
+      <button class="tab" role="tab" data-view="goals">Goals</button>
+      <button class="tab" role="tab" data-view="study">Study</button>
+      <button class="tab" role="tab" data-view="notes">Notes</button>
+    </nav>
+
+    <section id="tasks-view">
+      <form id="task-form" class="add-form">
+        <input id="task-input" type="text" placeholder="What do you need to do?"
+               maxlength="200" autocomplete="off" required>
+        <input id="task-due" type="date" aria-label="Due date (optional)">
+        <button type="submit">Add</button>
+      </form>
+
+      <ul id="task-list"></ul>
+
+      <p id="task-count" class="count"></p>
+    </section>
+
+    <section id="habits-view" hidden>
+      <form id="habit-form" class="add-form">
+        <input id="habit-input" type="text" placeholder="New habit, e.g. Read 20 minutes"
+               maxlength="100" autocomplete="off" required>
+        <button type="submit">Add</button>
+      </form>
+
+      <ul id="habit-list"></ul>
+
+      <p id="habit-empty" class="count">No habits yet. Add one above.</p>
+    </section>
+
+    <section id="goals-view" hidden>
+      <form id="goal-form" class="add-form">
+        <input id="goal-input" type="text" placeholder="New goal, e.g. Finish OWASP Top 10"
+               maxlength="120" autocomplete="off" required>
+        <input id="goal-due" type="date" aria-label="Target date (optional)">
+        <button type="submit">Add</button>
+      </form>
+
+      <ul id="goal-list"></ul>
+
+      <p id="goal-empty" class="count">No goals yet. Add one, then break it into steps.</p>
+    </section>
+
+    <section id="study-view" hidden>
+      <div class="timer">
+        <div class="modes" role="group" aria-label="Timer mode">
+          <button class="mode" data-mode="focus">Focus · 25 min</button>
+          <button class="mode" data-mode="break">Break · 5 min</button>
+        </div>
+
+        <p id="timer-display" class="timer-display">25:00</p>
+
+        <div class="progress">
+          <div id="timer-fill" class="progress-fill"></div>
+        </div>
+
+        <input id="study-subject" type="text" placeholder="What are you studying? (optional)"
+               maxlength="80" autocomplete="off">
+
+        <div class="timer-controls">
+          <button id="timer-start" class="btn-primary">Start</button>
+          <button id="timer-reset" class="btn-secondary">Reset</button>
+        </div>
+      </div>
+
+      <h2 class="section-title">Today</h2>
+      <p id="session-summary" class="count"></p>
+      <ul id="session-list"></ul>
+    </section>
+
+    <section id="notes-view" hidden>
+      <!-- List of notes -->
+      <div id="notes-browser">
+        <div class="notes-toolbar">
+          <input id="note-search" type="search" placeholder="Search notes…"
+                 aria-label="Search notes" autocomplete="off">
+          <button id="note-new" class="btn-primary">New note</button>
+        </div>
+        <ul id="note-list"></ul>
+        <p id="note-empty" class="count"></p>
+      </div>
+
+      <!-- Editor for one note -->
+      <div id="note-editor" hidden>
+        <div class="editor-bar">
+          <button id="note-back" class="btn-secondary">← All notes</button>
+          <span id="note-status" class="count"></span>
+          <button id="note-delete" class="btn-danger">Delete</button>
+        </div>
+        <input id="note-title" type="text" placeholder="Title" maxlength="120"
+               autocomplete="off" aria-label="Note title">
+        <textarea id="note-body" placeholder="Start writing…" aria-label="Note text"></textarea>
+      </div>
+    </section>
+
+    <footer class="backup">
+      <span id="backup-status" class="count"></span>
+      <div class="backup-actions">
+        <button id="backup-export" class="btn-secondary">Export backup</button>
+        <button id="backup-import" class="btn-secondary">Import</button>
+        <input id="backup-file" type="file" accept=".json,application/json" hidden>
+      </div>
+    </footer>
+  </main>
+
+  <!-- type="module" gives each file its own scope; utils.js is pulled in by import -->
+  <script type="module" src="app.js"></script>
+  <script type="module" src="habits.js"></script>
+  <script type="module" src="goals.js"></script>
+  <script type="module" src="timer.js"></script>
+  <script type="module" src="notes.js"></script>
+  <script type="module" src="backup.js"></script>
+  <script type="module" src="pwa.js"></script>
+  <script type="module" src="tabs.js"></script>
+</body>
+</html>

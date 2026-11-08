@@ -1,0 +1,6 @@
+# Private: personal briefing for Claude, never publish
+CLAUDE.md
+
+# Local tool settings, not part of the app
+.claude/
+.impeccable/
