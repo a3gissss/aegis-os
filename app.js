@@ -59,7 +59,9 @@ function render() {
     checkbox.checked = task.done;
     checkbox.addEventListener("change", () => toggleTask(task.id));
 
-    const body = document.createElement("div");
+    // A <span>, not a <div>: it sits inside a <label>, which may only
+    // contain inline ("phrasing") elements
+    const body = document.createElement("span");
     body.className = "task-body";
 
     // SECURITY: textContent treats the text as plain text, never as HTML.
@@ -83,7 +85,12 @@ function render() {
     del.setAttribute("aria-label", "Delete task");
     del.addEventListener("click", () => deleteTask(task.id));
 
-    li.append(checkbox, body, del);
+    // Wrapping checkbox + text in a <label> makes the whole row tappable
+    const main = document.createElement("label");
+    main.className = "task-main";
+    main.append(checkbox, body);
+
+    li.append(main, del);
     list.append(li);
   }
 

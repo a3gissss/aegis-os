@@ -6,7 +6,7 @@
 //         and keep a copy in the cache.
 // Offline: the fetch fails, so serve the cached copy instead.
 
-const CACHE = "aegis-v3"; // bump this whenever APP_FILES or this file's logic changes
+const CACHE = "aegis-v4"; // bump this whenever APP_FILES or this file's logic changes
 
 // The "app shell": every file needed to start the app
 const APP_FILES = [
@@ -20,6 +20,7 @@ const APP_FILES = [
   "./timer.js",
   "./notes.js",
   "./backup.js",
+  "./settings.js",
   "./tabs.js",
   "./today.js",
   "./pwa.js",

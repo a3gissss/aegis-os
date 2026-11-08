@@ -119,7 +119,12 @@ function renderGoals() {
       delStep.setAttribute("aria-label", "Delete step");
       delStep.addEventListener("click", () => deleteStep(goal.id, step.id));
 
-      stepLi.append(checkbox, text, delStep);
+      // The <label> makes the whole step row tappable, not just the tiny box
+      const stepMain = document.createElement("label");
+      stepMain.className = "step-main";
+      stepMain.append(checkbox, text);
+
+      stepLi.append(stepMain, delStep);
       stepList.append(stepLi);
     }
 

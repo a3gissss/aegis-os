@@ -2,37 +2,91 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- viewport-fit=cover lets the bottom tab bar sit above the phone's home indicator -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Aegis OS</title>
   <link rel="stylesheet" href="style.css">
 
   <!-- Makes Aegis OS installable as an app (PWA) -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f1115">
+  <meta name="theme-color" content="#0c0e12">
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
   <main class="app">
     <header class="app-header">
-      <div>
-        <h1>Aegis OS</h1>
-        <p id="today" class="subtitle"></p>
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/>
+        </svg>
+        <h1 class="brand-name">Aegis OS</h1>
       </div>
-      <!-- Only shown when the browser says the app can be installed -->
-      <button id="install-btn" class="btn-secondary" hidden>Install app</button>
+      <div class="header-actions">
+        <!-- Only shown when the browser says the app can be installed -->
+        <button id="install-btn" class="btn-secondary btn-small" hidden>Install</button>
+        <button id="settings-btn" class="icon-btn" aria-label="Settings">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M19 18h1"/>
+            <circle cx="16" cy="6" r="2.5"/><circle cx="10" cy="12" r="2.5"/><circle cx="17" cy="18" r="2.5"/>
+          </svg>
+        </button>
+      </div>
     </header>
 
-    <nav class="tabs" role="tablist">
-      <button class="tab" role="tab" data-view="today">Today</button>
-      <button class="tab" role="tab" data-view="tasks">Tasks</button>
-      <button class="tab" role="tab" data-view="habits">Habits</button>
-      <button class="tab" role="tab" data-view="goals">Goals</button>
-      <button class="tab" role="tab" data-view="study">Study</button>
-      <button class="tab" role="tab" data-view="notes">Notes</button>
+    <!-- On phones this becomes a bar fixed to the bottom of the screen (see style.css) -->
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" data-view="today">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+        </svg>
+        <span>Today</span>
+      </button>
+      <button class="tab" role="tab" data-view="tasks">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/>
+        </svg>
+        <span>Tasks</span>
+      </button>
+      <button class="tab" role="tab" data-view="habits">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3c.5 3 4.5 5 4.5 10a4.5 4.5 0 0 1-9 0c0-2.2 1-3.7 2.3-4.8.2 1.8 1 2.8 2.2 3.3C11.5 9 11 6 12 3z"/>
+        </svg>
+        <span>Habits</span>
+      </button>
+      <button class="tab" role="tab" data-view="goals">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>
+        </svg>
+        <span>Goals</span>
+      </button>
+      <button class="tab" role="tab" data-view="study">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M10 2h4"/>
+        </svg>
+        <span>Study</span>
+      </button>
+      <button class="tab" role="tab" data-view="notes">
+        <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>
+        </svg>
+        <span>Notes</span>
+      </button>
     </nav>
 
     <section id="today-view" hidden>
+      <div class="view-head">
+        <h2 class="view-title">Today</h2>
+        <p id="today" class="view-sub"></p>
+      </div>
+
+      <!-- Shown only when a backup is overdue (or right after a restore) -->
+      <div id="backup-reminder" class="banner" hidden>
+        <span id="backup-reminder-text"></span>
+        <button id="backup-reminder-btn" class="link-btn">Back up now</button>
+      </div>
+
       <div class="today-summary">
         <p id="today-headline" class="today-headline"></p>
         <div id="today-bar" class="progress">
@@ -40,16 +94,16 @@
         </div>
       </div>
 
-      <h2 class="section-title">Tasks due</h2>
+      <h3 class="section-title">Tasks due</h3>
       <ul id="today-tasks" class="today-list"></ul>
 
-      <h2 class="section-title">Habits</h2>
+      <h3 class="section-title">Habits</h3>
       <ul id="today-habits" class="today-list"></ul>
 
-      <h2 class="section-title">Next goal steps</h2>
+      <h3 class="section-title">Next goal steps</h3>
       <ul id="today-goals" class="today-list"></ul>
 
-      <h2 class="section-title">Study</h2>
+      <h3 class="section-title">Study</h3>
       <div class="today-study">
         <span id="today-study-text"></span>
         <button id="today-study-btn" class="btn-primary">Start focus</button>
@@ -57,44 +111,54 @@
     </section>
 
     <section id="tasks-view" hidden>
+      <h2 class="view-title">Tasks</h2>
       <form id="task-form" class="add-form">
         <input id="task-input" type="text" placeholder="What do you need to do?"
-               maxlength="200" autocomplete="off" required>
-        <input id="task-due" type="date" aria-label="Due date (optional)">
+               maxlength="200" autocomplete="off" required aria-label="New task">
+        <label class="date-field">
+          <span>Due</span>
+          <input id="task-due" type="date" aria-label="Due date (optional)">
+        </label>
         <button type="submit">Add</button>
       </form>
 
-      <ul id="task-list"></ul>
+      <ul id="task-list" class="list"></ul>
 
       <p id="task-count" class="count"></p>
     </section>
 
     <section id="habits-view" hidden>
+      <h2 class="view-title">Habits</h2>
       <form id="habit-form" class="add-form">
         <input id="habit-input" type="text" placeholder="New habit, e.g. Read 20 minutes"
-               maxlength="100" autocomplete="off" required>
+               maxlength="100" autocomplete="off" required aria-label="New habit">
         <button type="submit">Add</button>
       </form>
 
-      <ul id="habit-list"></ul>
+      <ul id="habit-list" class="list"></ul>
 
       <p id="habit-empty" class="count">No habits yet. Add one above.</p>
     </section>
 
     <section id="goals-view" hidden>
+      <h2 class="view-title">Goals</h2>
       <form id="goal-form" class="add-form">
         <input id="goal-input" type="text" placeholder="New goal, e.g. Finish OWASP Top 10"
-               maxlength="120" autocomplete="off" required>
-        <input id="goal-due" type="date" aria-label="Target date (optional)">
+               maxlength="120" autocomplete="off" required aria-label="New goal">
+        <label class="date-field">
+          <span>Target</span>
+          <input id="goal-due" type="date" aria-label="Target date (optional)">
+        </label>
         <button type="submit">Add</button>
       </form>
 
-      <ul id="goal-list"></ul>
+      <ul id="goal-list" class="list"></ul>
 
       <p id="goal-empty" class="count">No goals yet. Add one, then break it into steps.</p>
     </section>
 
     <section id="study-view" hidden>
+      <h2 class="view-title">Study</h2>
       <div class="timer">
         <div class="modes" role="group" aria-label="Timer mode">
           <button class="mode" data-mode="focus">Focus · 25 min</button>
@@ -108,7 +172,7 @@
         </div>
 
         <input id="study-subject" type="text" placeholder="What are you studying? (optional)"
-               maxlength="80" autocomplete="off">
+               maxlength="80" autocomplete="off" aria-label="Study subject">
 
         <div class="timer-controls">
           <button id="timer-start" class="btn-primary">Start</button>
@@ -116,45 +180,66 @@
         </div>
       </div>
 
-      <h2 class="section-title">Today</h2>
+      <h3 class="section-title">Today</h3>
       <p id="session-summary" class="count"></p>
-      <ul id="session-list"></ul>
+      <ul id="session-list" class="list"></ul>
     </section>
 
     <section id="notes-view" hidden>
       <!-- List of notes -->
       <div id="notes-browser">
+        <h2 class="view-title">Notes</h2>
         <div class="notes-toolbar">
           <input id="note-search" type="search" placeholder="Search notes…"
                  aria-label="Search notes" autocomplete="off">
           <button id="note-new" class="btn-primary">New note</button>
         </div>
-        <ul id="note-list"></ul>
+        <ul id="note-list" class="list"></ul>
         <p id="note-empty" class="count"></p>
       </div>
 
       <!-- Editor for one note -->
       <div id="note-editor" hidden>
         <div class="editor-bar">
-          <button id="note-back" class="btn-secondary">← All notes</button>
+          <button id="note-back" class="btn-secondary btn-small">← All notes</button>
           <span id="note-status" class="count"></span>
-          <button id="note-delete" class="btn-danger">Delete</button>
+          <button id="note-delete" class="btn-danger btn-small">Delete</button>
         </div>
         <input id="note-title" type="text" placeholder="Title" maxlength="120"
                autocomplete="off" aria-label="Note title">
         <textarea id="note-body" placeholder="Start writing…" aria-label="Note text"></textarea>
       </div>
     </section>
-
-    <footer class="backup">
-      <span id="backup-status" class="count"></span>
-      <div class="backup-actions">
-        <button id="backup-export" class="btn-secondary">Export backup</button>
-        <button id="backup-import" class="btn-secondary">Import</button>
-        <input id="backup-file" type="file" accept=".json,application/json" hidden>
-      </div>
-    </footer>
   </main>
+
+  <!-- Settings panel. <dialog> is built into HTML: it handles focus,
+       the dimmed backdrop and closing with Escape for us. -->
+  <dialog id="settings" class="sheet" aria-labelledby="settings-title">
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <h2 id="settings-title">Settings</h2>
+        <button id="settings-close" class="icon-btn" aria-label="Close settings">✕</button>
+      </div>
+
+      <div class="sheet-section">
+        <h3>Backup</h3>
+        <p class="hint">Your data lives only on this device. Export a backup every few days
+          and keep the file somewhere safe.</p>
+        <p id="backup-status" class="count"></p>
+        <div class="backup-actions">
+          <button id="backup-export" class="btn-primary">Export backup</button>
+          <button id="backup-import" class="btn-secondary">Import backup</button>
+          <input id="backup-file" type="file" accept=".json,application/json" hidden>
+        </div>
+      </div>
+
+      <div class="sheet-section">
+        <h3>About</h3>
+        <p class="hint">Aegis OS works offline. Nothing you add ever leaves this device
+          unless you export it.</p>
+      </div>
+    </div>
+  </dialog>
 
   <!-- type="module" gives each file its own scope; utils.js is pulled in by import -->
   <script type="module" src="app.js"></script>
@@ -163,6 +248,7 @@
   <script type="module" src="timer.js"></script>
   <script type="module" src="notes.js"></script>
   <script type="module" src="backup.js"></script>
+  <script type="module" src="settings.js"></script>
   <script type="module" src="pwa.js"></script>
   <script type="module" src="today.js"></script>
   <script type="module" src="tabs.js"></script>

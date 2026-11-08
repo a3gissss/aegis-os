@@ -1,4 +1,4 @@
-import { cleanDate, dateKey } from "./utils.js";
+import { cleanDate, dateKey, onChange } from "./utils.js";
 
 // Export all your data to a .json file, and import it back.
 const BACKUP_FORMAT = "aegis-os-backup";
@@ -11,6 +11,11 @@ const statusEl = document.getElementById("backup-status");
 const exportBtn = document.getElementById("backup-export");
 const importBtn = document.getElementById("backup-import");
 const fileInput = document.getElementById("backup-file");
+
+// The reminder banner on the Today screen
+const reminder = document.getElementById("backup-reminder");
+const reminderText = document.getElementById("backup-reminder-text");
+const reminderBtn = document.getElementById("backup-reminder-btn");
 
 const isString = (v) => typeof v === "string";
 const isBool = (v) => typeof v === "boolean";
@@ -80,14 +85,38 @@ function setStatus(text, tone = "") {
   statusEl.className = `count ${tone}`;
 }
 
-// "Last backup: 3 days ago". Turns orange if it's been a week or more.
+// Show or hide the banner on Today. Pass null to hide it.
+// "warn" banners get a "Back up now" button; "ok" ones are just a message.
+function showReminder(text, tone = "warn") {
+  reminder.hidden = !text;
+  if (!text) return;
+  reminderText.textContent = text;
+  reminder.className = `banner ${tone}`;
+  reminderBtn.hidden = tone !== "warn";
+}
+
+function hasAnyData() {
+  return Object.values(COLLECTIONS).some(({ key }) => readList(key).length > 0);
+}
+
+// "Last backup: 3 days ago" in Settings. Turns orange after a week.
+// The Today banner only appears when a backup is actually overdue AND
+// there's something worth losing, so a brand-new, empty app doesn't nag.
 function renderStatus() {
   const last = Number(localStorage.getItem(LAST_BACKUP_KEY));
-  if (!last) return setStatus("Last backup: never", "warn");
+  const days = last ? Math.floor((Date.now() - last) / 86400000) : null;
 
-  const days = Math.floor((Date.now() - last) / 86400000);
-  const when = days === 0 ? "today" : days === 1 ? "yesterday" : `${days} days ago`;
-  setStatus(`Last backup: ${when}`, days >= 7 ? "warn" : "");
+  if (days === null) {
+    setStatus("Last backup: never", "warn");
+  } else {
+    const when = days === 0 ? "today" : days === 1 ? "yesterday" : `${days} days ago`;
+    setStatus(`Last backup: ${when}`, days >= 7 ? "warn" : "");
+  }
+
+  const overdue = days === null || days >= 7;
+  if (!overdue || !hasAnyData()) showReminder(null);
+  else if (days === null) showReminder("You haven't backed up yet. Your data only lives on this device.");
+  else showReminder(`Your last backup was ${days} days ago.`);
 }
 
 function exportBackup() {
@@ -172,6 +201,10 @@ async function importBackup(file) {
 }
 
 exportBtn.addEventListener("click", exportBackup);
+reminderBtn.addEventListener("click", exportBackup);
+
+// Re-check after every change: e.g. your first task makes the reminder relevant
+onChange(renderStatus);
 
 // The real file picker is hidden (it's hard to style), so our button opens it
 importBtn.addEventListener("click", () => fileInput.click());
@@ -190,5 +223,5 @@ try {
 } catch {
   // ignore
 }
-if (restored) setStatus(restored, "ok");
-else renderStatus();
+renderStatus();
+if (restored) showReminder(restored, "ok");

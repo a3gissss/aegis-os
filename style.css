@@ -1,15 +1,26 @@
-/* Colors live in variables so the whole theme can change from one place */
+/* ==========================================================================
+   Design tokens: every color, corner radius and shadow lives here, so the
+   whole look can change from one place.
+   ========================================================================== */
 :root {
-  --bg: #0f1115;
-  --panel: #171a21;
-  --border: #262a33;
-  --text: #e6e8ec;
-  --muted: #8b919c;
-  --accent: #4f8cff;
-  --accent-strong: #2f6fe0; /* darker blue so white text on buttons stays readable */
+  --bg: #0c0e12;
+  --surface: #151921;        /* cards and panels */
+  --surface-2: #1c212b;      /* raised / hovered surfaces */
+  --border: #252b36;
+  --text: #e8eaef;
+  --muted: #959cab;
+  --accent: #5b93ff;
+  --accent-strong: #2f6fe0;  /* darker blue so white text on buttons stays readable */
+  --accent-soft: rgba(91, 147, 255, 0.14);
   --success: #3ccf7a;
-  --danger: #ff5c5c;
+  --danger: #ff6161;
   --warning: #ffb547;
+
+  --radius: 14px;            /* cards */
+  --radius-sm: 10px;         /* inputs, buttons, rows */
+  --radius-pill: 999px;
+
+  --tap: 44px;               /* minimum size for anything you tap */
 
   /* Tells the browser to draw built-in controls (like the date picker) dark */
   color-scheme: dark;
@@ -24,223 +35,461 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  display: flex;
-  justify-content: center;
-  padding: 48px 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.45;
+  padding: 20px 16px 48px;
+  -webkit-tap-highlight-color: transparent; /* no grey flash when tapping on Android */
 }
 
 .app {
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
+  margin: 0 auto;
 }
 
+/* Keyboard users get a clear focus ring; mouse and touch users don't see it */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button {
+  font: inherit;
+}
+
+/* Shared icon style: line icons drawn with the current text color */
+.icon,
+.tab-icon,
+.brand-mark {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
 .app-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 12px;
+  margin-bottom: 20px;
 }
 
-#install-btn {
-  flex: 0 0 auto;
-  padding: 8px 12px;
-  font-size: 0.9rem;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-h1 {
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  background: var(--accent-strong);
+  border-radius: 9px;
+  stroke: white;
+  fill: rgba(255, 255, 255, 0.15);
+}
+
+.brand-name {
   margin: 0;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.subtitle {
-  margin: 4px 0 24px;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
   color: var(--muted);
+  font-size: 1.1rem;
+  cursor: pointer;
 }
 
-/* Tabs */
+
+.icon-btn .icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* ==========================================================================
+   Tabs: a segmented bar on wide screens, a bottom tab bar on phones
+   ========================================================================== */
 .tabs {
   display: flex;
   gap: 4px;
   padding: 4px;
-  margin-bottom: 20px;
-  background: var(--panel);
+  margin-bottom: 24px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 
 .tab {
   flex: 1;
   min-width: 0;
-  min-height: 44px; /* comfortable thumb target */
-  padding: 8px 2px;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 4px;
   background: none;
   border: none;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.tab-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
 }
 
 .tab.active {
-  background: var(--border);
+  background: var(--surface-2);
   color: var(--text);
 }
 
-/* Input row (shared by tasks and habits) */
-.add-form {
-  display: flex;
-  flex-wrap: wrap; /* lets the date picker drop to a new line on phones */
-  gap: 8px;
-  margin-bottom: 16px;
+@media (max-width: 639px) {
+  /* Leave room at the bottom so the fixed bar never covers content */
+  body {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    margin: 0;
+    gap: 0;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    border: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: rgba(21, 25, 33, 0.94);
+    backdrop-filter: blur(14px); /* frosted glass over content scrolling underneath */
+  }
+
+  .tab {
+    flex-direction: column;
+    gap: 2px;
+    min-height: 56px;
+    padding: 4px 0;
+    font-size: 0.7rem;
+  }
+
+  .tab.active {
+    background: none;
+    color: var(--accent);
+  }
+
+  /* The pill behind the active icon (the pattern Android apps use) */
+  .tab-icon {
+    width: 22px;
+    height: 22px;
+    padding: 3px 14px;
+    box-sizing: content-box;
+    border-radius: var(--radius-pill);
+    transition: background 0.15s;
+  }
+
+  .tab.active .tab-icon {
+    background: var(--accent-soft);
+  }
 }
 
-.add-form input {
-  flex: 1;
-  padding: 12px 14px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 1rem;
+/* ==========================================================================
+   Shared building blocks
+   ========================================================================== */
+.view-title {
+  margin: 0 0 16px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-.add-form input[type="text"] {
-  min-width: 200px;
+.view-head {
+  margin-bottom: 20px;
 }
 
-.add-form input[type="date"] {
-  flex: 0 0 auto;
+.view-head .view-title {
+  margin-bottom: 2px;
 }
 
-.add-form input:focus {
-  outline: none;
-  border-color: var(--accent);
+.view-sub {
+  margin: 0;
+  color: var(--muted);
 }
 
-.add-form button {
-  padding: 0 18px;
-  background: var(--accent-strong);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+.section-title {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* Task and habit lists */
-#task-list,
-#habit-list,
-#goal-list,
-#session-list,
-#note-list {
+.list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.task {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+.count {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
-.task input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--accent);
+.count.ok { color: var(--success); }
+.count.warn { color: var(--warning); }
+.count.error { color: var(--danger); }
+
+.hint {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.link-btn {
+  min-height: var(--tap);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
-.task-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  word-break: break-word;
-}
-
-.task.done .task-text {
-  color: var(--muted);
-  text-decoration: line-through;
-}
-
-/* Deadline labels */
-.due {
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.due.soon {
-  color: var(--warning);
-}
-
-.due.today {
-  color: var(--accent);
+/* Buttons */
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  min-height: var(--tap);
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s, border-color 0.15s;
 }
 
-.due.overdue {
+.btn-primary {
+  background: var(--accent-strong);
+  border: none;
+  color: white;
+}
+
+.btn-secondary {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: none;
+  border: 1px solid var(--border);
   color: var(--danger);
-  font-weight: 600;
 }
 
-/* A finished task's deadline no longer matters, so tone it down */
-.task.done .due {
-  color: var(--muted);
-  font-weight: normal;
+.btn-small {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.9rem;
 }
 
+/* The ✕ on rows: small icon, full-size tap area */
 .delete {
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  margin: -8px -10px -8px 0;
   background: none;
   border: none;
+  border-radius: var(--radius-sm);
   color: var(--muted);
   font-size: 1rem;
   cursor: pointer;
 }
 
-.delete:hover {
-  color: var(--danger);
+
+/* Checkboxes everywhere */
+input[type="checkbox"] {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
-.count {
+/* Progress bars */
+.progress {
+  height: 8px;
+  background: var(--bg);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease; /* the bar slides instead of jumping */
+}
+
+/* Text inputs share one look */
+.add-form input[type="text"],
+#note-search,
+#study-subject,
+.step-form input {
+  min-height: var(--tap);
+  padding: 0 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.add-form input[type="text"]:focus,
+#note-search:focus,
+#study-subject:focus,
+.step-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ==========================================================================
+   Add forms (Tasks, Habits, Goals)
+   ========================================================================== */
+.add-form {
+  display: flex;
+  flex-wrap: wrap; /* the date field drops onto its own line on phones */
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.add-form input[type="text"] {
+  flex: 999 1 220px; /* takes all spare room, wraps below 220px */
+  min-width: 0;
+}
+
+/* A labelled date picker: "Due  [dd/mm/yyyy]" */
+.date-field {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--tap);
+  padding-left: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.date-field:focus-within {
+  border-color: var(--accent);
+}
+
+.date-field input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  padding: 0 10px 0 4px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font: inherit;
+}
+
+.date-field input:focus {
+  outline: none;
+}
+
+.add-form button {
+  min-height: var(--tap);
+  padding: 0 20px;
+  background: var(--accent-strong);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+
+/* ==========================================================================
+   Today
+   ========================================================================== */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 16px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
 }
 
-/* Status message tones */
-.count.ok {
-  color: var(--success);
-}
-
-.count.warn {
+.banner.warn {
+  background: rgba(255, 181, 71, 0.1);
+  border: 1px solid rgba(255, 181, 71, 0.3);
   color: var(--warning);
 }
 
-.count.error {
-  color: var(--danger);
+.banner.ok {
+  padding: 12px 16px;
+  background: rgba(60, 207, 122, 0.1);
+  border: 1px solid rgba(60, 207, 122, 0.3);
+  color: var(--success);
 }
 
-/* Today screen */
+.banner .link-btn {
+  color: inherit;
+  text-decoration: underline;
+}
+
 .today-summary {
-  padding: 16px;
-  margin-bottom: 24px;
-  background: var(--panel);
+  padding: 18px;
+  margin-bottom: 28px;
+  background: linear-gradient(135deg, var(--surface-2), var(--surface));
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius);
 }
 
 .today-headline {
-  margin: 0 0 12px;
-  font-size: 1.05rem;
+  margin: 0 0 14px;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
@@ -250,31 +499,43 @@ h1 {
 
 .today-list {
   list-style: none;
-  margin: 8px 0 24px;
+  margin: 0 0 28px;
   padding: 0;
 }
 
-.today-item label {
+/* ==========================================================================
+   Rows: tasks, Today items, sessions (all share the same card look)
+   ========================================================================== */
+.task,
+.today-item label,
+.session {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 48px;
-  padding: 10px 14px;
-  margin-bottom: 6px;
-  background: var(--panel);
+  min-height: 52px;
+  padding: 8px 14px;
+  margin-bottom: 8px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+
+/* The tappable part of a task row (checkbox + text) */
+.task-main,
+.today-item label {
   cursor: pointer;
 }
 
-.today-item input[type="checkbox"] {
-  flex: none;
-  width: 20px;
-  height: 20px;
-  accent-color: var(--accent);
-  cursor: pointer;
+.task-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap);
 }
 
+.task-body,
 .today-body {
   flex: 1;
   display: flex;
@@ -288,6 +549,7 @@ h1 {
   font-size: 0.8rem;
 }
 
+.task.done .task-text,
 .today-item.done .today-main {
   color: var(--muted);
   text-decoration: line-through;
@@ -298,23 +560,12 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 4px 14px;
-  margin-bottom: 6px;
+  padding: 2px 14px;
+  margin-bottom: 8px;
   border: 1px dashed var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
   font-size: 0.9rem;
-}
-
-.link-btn {
-  min-height: 40px;
-  padding: 0;
-  background: none;
-  border: none;
-  color: var(--accent);
-  font: inherit;
-  white-space: nowrap;
-  cursor: pointer;
 }
 
 .today-study {
@@ -323,62 +574,71 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 14px;
-  margin-top: 8px;
-  background: var(--panel);
+  padding: 10px 10px 10px 16px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
-.today-study .btn-primary {
-  flex: 0 0 auto;
-  padding: 10px 16px;
-  font-size: 0.95rem;
+/* Deadline labels */
+.due {
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
-/* Backup bar at the bottom of the page */
-.backup {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+.due.soon { color: var(--warning); }
+.due.today { color: var(--accent); font-weight: 600; }
+.due.overdue { color: var(--danger); font-weight: 600; }
+
+/* A finished task's deadline no longer matters, so tone it down */
+.task.done .due {
+  color: var(--muted);
+  font-weight: normal;
 }
 
-.backup-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.backup .btn-secondary {
-  flex: 0 0 auto;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-}
-
-/* Habits */
-.habit {
-  padding: 14px;
-  margin-bottom: 8px;
-  background: var(--panel);
+/* ==========================================================================
+   Cards: habits and goals
+   ========================================================================== */
+.habit,
+.goal {
+  padding: 16px;
+  margin-bottom: 10px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 
-.habit-top {
+.goal.complete {
+  border-color: rgba(60, 207, 122, 0.5);
+}
+
+.habit-top,
+.goal-top {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
 }
 
-.habit-name {
-  flex: 1;
+.goal-top {
+  align-items: flex-start;
+}
+
+.habit-name,
+.goal-title {
   font-weight: 600;
   word-break: break-word;
+}
+
+.habit-name {
+  flex: 1;
+}
+
+.goal-heading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .streak {
@@ -391,6 +651,7 @@ h1 {
   color: var(--text);
 }
 
+/* Habit week: seven day buttons */
 .days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -402,13 +663,15 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 8px 0;
+  min-height: 52px;
+  padding: 7px 0;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .day strong {
@@ -430,168 +693,127 @@ h1 {
   color: #0b2617;
 }
 
-/* Goals */
-.goal {
-  padding: 14px;
-  margin-bottom: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.goal.complete {
-  border-color: var(--success);
-}
-
-.goal-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.goal-heading {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  word-break: break-word;
-}
-
-.goal-title {
-  font-weight: 600;
-}
-
-.progress {
-  height: 8px;
-  background: var(--bg);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 999px;
-  transition: width 0.3s ease; /* the bar slides instead of jumping */
-}
-
+/* Goal progress and steps */
 .goal.complete .progress-fill {
   background: var(--success);
 }
 
 .progress-text {
-  margin: 6px 0 10px;
+  margin: 8px 0 8px;
   color: var(--muted);
   font-size: 0.85rem;
 }
 
 .steps {
   list-style: none;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   padding: 0;
 }
 
 .step {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 0;
   border-top: 1px solid var(--border);
 }
 
-.step input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
+.step-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap);
   cursor: pointer;
 }
 
-.step span {
+.step-main span {
   flex: 1;
   font-size: 0.95rem;
   word-break: break-word;
 }
 
-.step.done span {
+.step.done .step-main span {
   color: var(--muted);
   text-decoration: line-through;
 }
 
+.step .delete {
+  margin: 0 -10px 0 0;
+}
+
 .step-form {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .step-form input {
   flex: 1;
-  padding: 8px 10px;
+  min-width: 0;
   background: var(--bg);
+  font-size: 0.95rem;
+}
+
+.step-form button {
+  width: var(--tap);
+  min-height: var(--tap);
+  background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
-.step-form input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-/* Study timer */
+/* ==========================================================================
+   Study timer
+   ========================================================================== */
 .timer {
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding: 20px;
-  margin-bottom: 24px;
-  background: var(--panel);
+  margin-bottom: 28px;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius);
 }
 
 .modes {
   display: flex;
-  gap: 6px;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
 }
 
 .mode {
   flex: 1;
-  padding: 8px;
+  min-height: 40px;
+  padding: 0 8px;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: none;
+  border-radius: 7px;
   color: var(--muted);
   font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .mode.active {
-  border-color: var(--accent);
+  background: var(--surface-2);
   color: var(--text);
 }
 
 .timer-display {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   text-align: center;
-  font-size: 4.5rem;
+  font-size: 4.75rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums; /* every digit the same width, so it doesn't wobble */
 }
 
 #study-subject {
-  padding: 10px 12px;
   background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 0.95rem;
-}
-
-#study-subject:focus {
-  outline: none;
-  border-color: var(--accent);
 }
 
 #study-subject:disabled {
@@ -603,43 +825,12 @@ h1 {
   gap: 8px;
 }
 
-.btn-primary,
-.btn-secondary {
+.timer-controls button {
   flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: var(--accent-strong);
-  border: none;
-  color: white;
-}
-
-.btn-secondary {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-
-.section-title {
-  margin: 0 0 4px;
-  font-size: 1.1rem;
 }
 
 .session {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
-  margin-bottom: 6px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
 }
 
 .session span {
@@ -651,7 +842,9 @@ h1 {
   white-space: nowrap;
 }
 
-/* Notes */
+/* ==========================================================================
+   Notes
+   ========================================================================== */
 .notes-toolbar {
   display: flex;
   gap: 8px;
@@ -661,22 +854,10 @@ h1 {
 #note-search {
   flex: 1;
   min-width: 0;
-  padding: 12px 14px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 1rem;
-}
-
-#note-search:focus {
-  outline: none;
-  border-color: var(--accent);
 }
 
 .notes-toolbar .btn-primary {
-  flex: 0 0 auto;
-  padding: 0 16px;
+  flex: none;
 }
 
 .note-card {
@@ -684,19 +865,15 @@ h1 {
   flex-direction: column;
   gap: 4px;
   width: 100%;
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin-bottom: 8px;
-  background: var(--panel);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--text);
-  font: inherit;
   text-align: left;
   cursor: pointer;
-}
-
-.note-card:hover {
-  border-color: var(--accent);
+  transition: border-color 0.15s;
 }
 
 .note-card span {
@@ -717,53 +894,35 @@ h1 {
   margin-bottom: 12px;
 }
 
-.editor-bar .btn-secondary {
-  flex: 0 0 auto;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-}
-
 #note-status {
   flex: 1;
-}
-
-.btn-danger {
-  padding: 8px 12px;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--danger);
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.btn-danger:hover {
-  border-color: var(--danger);
+  margin: 0;
 }
 
 #note-title,
 #note-body {
   width: 100%;
-  background: var(--panel);
+  background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
   font-family: inherit;
 }
 
 #note-title {
-  padding: 12px 14px;
-  border-radius: 8px 8px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--radius) var(--radius) 0 0;
   border-bottom: none;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 #note-body {
-  min-height: 50vh;
-  padding: 12px 14px;
-  border-radius: 0 0 8px 8px;
+  display: block;
+  min-height: 55vh;
+  padding: 12px 16px;
+  border-radius: 0 0 var(--radius) var(--radius);
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.65;
   resize: vertical;
 }
 
@@ -773,12 +932,120 @@ h1 {
   border-color: var(--accent);
 }
 
-.step-form button {
-  width: 36px;
-  background: var(--border);
-  border: none;
-  border-radius: 6px;
+/* ==========================================================================
+   Hover effects, only on devices with a real mouse/trackpad.
+   On touchscreens, :hover "sticks" to whatever you last tapped, which would
+   leave buttons looking highlighted after you've used them.
+   ========================================================================== */
+@media (hover: hover) {
+  .icon-btn:hover {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .tab:hover {
+    color: var(--text);
+  }
+
+  .btn-primary:hover,
+  .add-form button:hover {
+    filter: brightness(1.1);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--muted);
+  }
+
+  .btn-danger:hover {
+    border-color: var(--danger);
+  }
+
+  .delete:hover {
+    color: var(--danger);
+    background: var(--surface-2);
+  }
+
+  .task:hover,
+  .today-item label:hover {
+    border-color: #323a48;
+  }
+
+  .note-card:hover {
+    border-color: var(--accent);
+  }
+}
+
+/* ==========================================================================
+   Settings panel: a bottom sheet on phones, a centered card on wide screens
+   ========================================================================== */
+.sheet {
+  width: 100%;
+  max-width: 560px;
+  margin: auto auto 0;
+  padding: 0; /* padding lives on .sheet-inner, so backdrop clicks are easy to detect */
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
   color: var(--text);
-  font-size: 1.1rem;
-  cursor: pointer;
+}
+
+.sheet::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.sheet-inner {
+  padding: 8px 20px calc(24px + env(safe-area-inset-bottom));
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sheet-head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.sheet-head .icon-btn {
+  margin-right: -10px;
+}
+
+.sheet-section {
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+
+.sheet-section h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.sheet-section .count {
+  margin: 0 0 12px;
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.backup-actions button {
+  flex: 1 1 auto;
+}
+
+@media (min-width: 640px) {
+  .sheet {
+    margin: auto;
+    border-bottom: 1px solid var(--border);
+    border-radius: 20px;
+  }
+
+  .sheet-inner {
+    padding-bottom: 24px;
+  }
 }
