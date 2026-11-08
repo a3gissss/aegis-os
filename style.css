@@ -160,10 +160,33 @@ button {
   transition: color 0.15s, background 0.15s;
 }
 
+/* Each section has its own colour. --tab-soft is the same colour at low
+   opacity, for the highlight behind the active icon. */
+.tab[data-view="today"]  { --tab-color: #ffb547; --tab-soft: rgba(255, 181, 71, 0.16); }
+.tab[data-view="tasks"]  { --tab-color: #5b93ff; --tab-soft: rgba(91, 147, 255, 0.16); }
+.tab[data-view="habits"] { --tab-color: #ff7a45; --tab-soft: rgba(255, 122, 69, 0.16); }
+.tab[data-view="goals"]  { --tab-color: #3ccf7a; --tab-soft: rgba(60, 207, 122, 0.16); }
+.tab[data-view="study"]  { --tab-color: #a78bfa; --tab-soft: rgba(167, 139, 250, 0.16); }
+.tab[data-view="notes"]  { --tab-color: #2dd4bf; --tab-soft: rgba(45, 212, 191, 0.16); }
+
+/* Bold, coloured icons: a thick outline plus a see-through fill of the
+   same colour, so they read as little pictures rather than thin wireframes.
+   (Detail lines like the tick in Tasks have fill="none" in the HTML.) */
 .tab-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex: none;
+  stroke: var(--tab-color);
+  stroke-width: 2.3;
+  fill: var(--tab-color);
+  fill-opacity: 0.25;
+  opacity: 0.8;
+  transition: opacity 0.15s, fill-opacity 0.15s;
+}
+
+.tab.active .tab-icon {
+  opacity: 1;
+  fill-opacity: 0.45; /* the selected icon looks more "filled in" */
 }
 
 .tab.active {
@@ -203,13 +226,13 @@ button {
 
   .tab.active {
     background: none;
-    color: var(--accent);
+    color: var(--tab-color); /* label takes the section's colour */
   }
 
   /* The pill behind the active icon (the pattern Android apps use) */
   .tab-icon {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     padding: 3px 14px;
     box-sizing: content-box;
     border-radius: var(--radius-pill);
@@ -217,7 +240,7 @@ button {
   }
 
   .tab.active .tab-icon {
-    background: var(--accent-soft);
+    background: var(--tab-soft);
   }
 }
 
